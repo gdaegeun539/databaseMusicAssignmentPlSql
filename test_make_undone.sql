@@ -18,7 +18,7 @@ select *
 from userinfo
 where emailid = '입력값' and passwd = '입력값';
 
--- 멤버십 선택 및 결제(완성아님)
+-- 멤버십 선택 및 결제
 insert into usermembership (userid , membershipid)
 select u.usernum, m.membershipid
 from userinfo u, membership m
@@ -27,12 +27,34 @@ UPDATE  USERMEMBERSHIP
 SET     CARDNUMBER = '0000_1111_2222_3333'
 WHERE   USERID = 현재유저변수값;
 
--- 멤버십 결제확인 후 관리자가 추가(완성아님)
+-- 멤버십 결제확인 후 관리자가 추가
 update membership
 set startdate = 확인날짜, enddate = 끝날짜
 where userid = 확인된유저변수값;
 
---
+-- 재생목록 만들기
+insert into playlist(userid, plid, plname, is_public, createdate)
+select u.usernum, 랜덤값함수, 클라이언트입력값, 0, 현재날짜값
+from userinfo u
+where u.usernum = 현재유저변수값;
+-- (공개여부 변경시)
+update playlist
+set is_public = 1
+where u.usernum = 현재유저변수값 and p.plid = 현재재생목록값(클라이언트);
+-- 곡 추가[미완]
+insert into music_playlist(plid, musicid, priority)
+select p.plid, m.musicid, max(p.priority)+1
+from playlist p, music m
+where p.plid = 클라이언트선택값 and p.userid = 현재유저값 or m.musicid = 클라이언트선택값
+-- 재생목록 곡 순서변경[미완]: 아이디어가 안떠오름
+
+
+-- 곡 검색(뷰 사용?)
+select musicname, playtime, singer, albumname
+from music_view
+where ??????
+
+-- 곡 재생(뷰 사용?)
 
 -- 최근재생내역 보기
 select m.musicname, h.timesplayed
