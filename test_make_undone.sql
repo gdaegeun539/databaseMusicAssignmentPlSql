@@ -45,7 +45,7 @@ where u.usernum = 현재유저변수값 and p.plid = 현재재생목록값(클�
 insert into music_playlist(plid, musicid, priority)
 select p.plid, m.musicid, max(p.priority)+1
 from playlist p, music m
-where p.plid = 클라이언트선택값 and p.userid = 현재유저변수값 or m.musicid = 클라이언트선택값
+where p.plid = 클라이언트선택값 and p.userid = 현재유저변수값 or m.musicid = 클라이언트선택값;
 -- 재생목록 곡 순서변경[미완]: 아이디어가 안떠오름
 
 
@@ -65,15 +65,15 @@ from history h, music m, user u
 where h.usernum = u.usernum and h.musicid = m.musicid
 order by h.recenttime;
 
--- 이용자 정보 수정
+-- 이용자 정보 수정(뷰 사용)
 update user_view
 set emailid = 입력값, nickname = 입력값, userfname = 입력값, userlname = 입력값 -- 일부만 쿼리도 가능
 where emailid = 기존id값 -- 식별용
--- 비밀번호 변경: 인증번호는 클라이언트단에서 처리
+-- 비밀번호 변경(뷰 사용): 인증번호는 클라이언트단에서 처리
 update user_view
 set passwd = 변경값
 where emailid = 클라이언트입력값
--- id찾기
+-- id찾기(뷰 사용)
 select emailid
 from user_view
 where userfname = 입력값 and userlname = 입력값 and bday = 입력값
@@ -100,8 +100,29 @@ delete from userinfo
    from support
   where inquiry_code = 2 and inquiry_time = 서버선택값 );
 
+-- 장르추가
+insert into genre
+values(1, 'Rock') -- 장르번호는 임의지정
 -- 앨범추가
+declare
+rand_album_id int := 랜덤함수;
+begin
+insert into album
+values (rand_album_id, '앨범명', 2000/01/01);
+end;
 -- 음원추가
--- 앨범삭제
--- 음원삭제
+declare
+rand_music_id int := 랜덤함수;
+begin
+insert into music
+select rand_music_id, '노래이름', 180, a.albumid, g.genreid
+from album a, genre g
+where a.albumname = '서버입력값' or g.genrename = '서버입력값';
+end;
 
+-- 음원삭제
+delete from music
+ where musicname = '서버입력값';
+-- 앨범삭제
+delete from album
+ where albumname = '서버입력값';
